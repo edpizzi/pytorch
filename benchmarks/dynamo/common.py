@@ -13,7 +13,6 @@ import itertools
 import logging
 import os
 import pathlib
-import random
 import shutil
 import signal
 import subprocess
@@ -43,6 +42,7 @@ from torch._functorch.aot_autograd import set_model_name
 from torch._inductor import config as inductor_config
 from torch._inductor.utils import aot_inductor_launcher, fresh_inductor_cache
 from torch._subclasses.fake_tensor import FakeTensorMode
+from torch.testing._internal.common_utils import reset_rng_state
 
 from torch.utils import _pytree as pytree
 from torch.utils._pytree import tree_map, tree_map_only
@@ -1601,14 +1601,6 @@ def cast_to_fp64(model, inputs):
 
 def cast_to_fp32(model, inputs):
     return cast_to(torch.float32, model, inputs)
-
-
-def reset_rng_state(use_xla=False):
-    torch.manual_seed(1337)
-    random.seed(1337)
-    np.random.seed(1337)
-    if use_xla:
-        xm.set_rng_state(1337, str(xm.xla_device()))
 
 
 class DummyGradScaler:
